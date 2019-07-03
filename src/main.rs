@@ -1,22 +1,13 @@
-use termion::{color, style};
+use std::io::{stdin, stdout};
+
+use game::Game;
+
+mod game;
 
 fn main() {
-    println!("{}", color::Fg(color::Red));
-    draw_horizontal();
+    let stdin = stdin();
+    let stdout = stdout();
 
-    for i in 0 .. 25 {
-        draw_vertical();
-    }
-
-    draw_horizontal();
-
-    print!("{}{}", termion::clear::All, termion::cursor::Goto(5, 5));
-}
-
-fn draw_horizontal() {
-    println!("------------------------------------------------------------");
-}
-
-fn draw_vertical() {
-    println!("|                                                          |");
+    let mut game = Game::new(stdin.lock(), stdout.lock());
+    game.run();
 }
