@@ -3,7 +3,7 @@ use std::io::{Read, Write};
 use termion::raw::{IntoRawMode, RawTerminal};
 use termion::{clear, cursor, style};
 
-use super::art::draw_welcome_screen;
+use super::game_loop::welcome_loop;
 
 pub struct Game<R, W: Write> {
     pub stdout: W,
@@ -32,7 +32,10 @@ impl<R: Read, W: Write> Game<R, W> {
     pub fn run(&mut self) {
         self.init();
 
-        draw_welcome_screen(&mut *self);
+        let quit = welcome_loop(&mut *self);
+        if quit {
+            return;
+        }
 
         loop {
             let mut b = [0];
