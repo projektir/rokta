@@ -2,6 +2,7 @@ use std::io::{stdin, stdout};
 
 use game::Game;
 
+mod art;
 mod game;
 
 fn main() {

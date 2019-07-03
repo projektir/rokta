@@ -3,9 +3,11 @@ use std::io::{Read, Write};
 use termion::raw::{IntoRawMode, RawTerminal};
 use termion::{clear, cursor, style};
 
+use super::art::draw_welcome_screen;
+
 pub struct Game<R, W: Write> {
-    stdout: W,
-    stdin: R,
+    pub stdout: W,
+    pub stdin: R,
 }
 
 impl<R: Read, W: Write> Game<R, W> {
@@ -17,11 +19,20 @@ impl<R: Read, W: Write> Game<R, W> {
     }
 
     fn init(&mut self) {
-        write!(self.stdout, "{}{}", clear::All, cursor::Goto(1, 1)).unwrap();
+        write!(
+            self.stdout,
+            "{}{}{}",
+            clear::All,
+            cursor::Goto(1, 1),
+            cursor::Hide
+        )
+        .unwrap();
     }
 
     pub fn run(&mut self) {
         self.init();
+
+        draw_welcome_screen(&mut *self);
 
         loop {
             let mut b = [0];
@@ -29,7 +40,7 @@ impl<R: Read, W: Write> Game<R, W> {
 
             match b[0] {
                 b'q' => return,
-                _ => {},
+                _ => {}
             }
 
             self.stdout.flush().unwrap();
@@ -39,6 +50,14 @@ impl<R: Read, W: Write> Game<R, W> {
 
 impl<R, W: Write> Drop for Game<R, W> {
     fn drop(&mut self) {
-        write!(self.stdout, "{}{}{}", clear::All, style::Reset, cursor::Goto(1, 1)).unwrap();
+        write!(
+            self.stdout,
+            "{}{}{}{}",
+            clear::All,
+            style::Reset,
+            cursor::Goto(1, 1),
+            cursor::Show
+        )
+        .unwrap();
     }
 }
